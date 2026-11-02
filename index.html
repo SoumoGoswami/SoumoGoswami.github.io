@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hostel Meal Tracker</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2430;--mut:#667085;--line:#e1e6ee;--l:#e8590c;--n:#4c4ccf;--on:#fff;--soft:#eef2f8;--bad:#c92a2a}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1217;--card:#171d26;--ink:#e8edf4;--mut:#93a0b3;--line:#2a3340;--l:#ff8a3d;--n:#8b8bff;--on:#0e1217;--soft:#1f2733;--bad:#ff8787}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:6px 0 2px}.sub{color:var(--mut);font-size:13px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.lbl{font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:12px;padding:14px 8px;font-size:16px;cursor:pointer;text-transform:capitalize}
+input,select{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--soft);color:var(--ink);width:100%}
+input.code{font-size:20px;text-align:center;letter-spacing:.1em}
+.btn{border:0;border-radius:10px;padding:14px;font-size:17px;font-weight:700;background:var(--ink);color:var(--bg);cursor:pointer;width:100%;margin-top:10px}
+.link{background:none;border:0;color:var(--mut);text-decoration:underline;cursor:pointer;font-size:14px;padding:8px}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.top b{text-transform:capitalize}
+.badge{font-size:11px;background:var(--ink);color:var(--bg);border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:middle}
+.dayrow{display:flex;gap:8px}.dayrow select{flex:1;min-width:0}
+.nav{width:46px;border-radius:10px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:20px;cursor:pointer}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mbox{border-radius:14px;padding:12px;text-align:center;border:2px solid}
+.mbox.l{border-color:var(--l)}.mbox.n{border-color:var(--n)}
+.mbox .t{font-size:13px;font-weight:600;color:var(--mut)}.mbox .c{font-size:38px;font-weight:700;line-height:1.1;margin:2px 0 8px}
+.add{width:100%;border:0;border-radius:10px;padding:14px 0;font-size:17px;font-weight:700;color:var(--on);cursor:pointer}
+.l .add{background:var(--l)}.n .add{background:var(--n)}
+.add:disabled{opacity:.35;cursor:not-allowed}
+.sm{background:none;border:0;color:var(--mut);text-decoration:underline;cursor:pointer;padding:8px;font-size:13px}.sm:disabled{opacity:.3;cursor:not-allowed}
+.stat{font-size:12px;color:var(--mut);margin-top:4px;min-height:16px}
+.row{padding:10px 0;border-top:1px solid var(--line)}.row:first-of-type{border-top:0}
+.nm{text-transform:capitalize;font-weight:600}.cnt{color:var(--mut)}.cnt b{color:var(--ink)}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.ctl{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:4px 6px;font-size:14px}
+.ctl button{width:38px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:18px;cursor:pointer}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;text-transform:capitalize}tfoot td{font-weight:700;border-bottom:0}
+.qty{width:54px;font:inherit;font-weight:700;text-align:center;padding:6px 2px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--ink)}
+.qty.big{width:84px;font-size:30px;padding:2px 0;margin:2px 0 8px}
+.bulk{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bk{border-radius:14px;padding:10px;text-align:center;border:2px solid}.bk.l{border-color:var(--l)}.bk.n{border-color:var(--n)}
+.bk .t{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:8px}
+.bk .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bk button{border:0;border-radius:10px;padding:14px 0;font-size:17px;font-weight:700;color:var(--on);cursor:pointer}
+.bk.l button{background:var(--l)}.bk.n button{background:var(--n)}
+.mgrs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.chip.mg{display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:700;font-size:17px;border:2px solid transparent;background:linear-gradient(var(--soft),var(--soft)) padding-box,linear-gradient(110deg,#ffb703,#fb5607,#c026d3,#3a86ff,#ffb703) border-box;background-size:100% 100%,300% 100%;animation:mgslide 4s ease-in-out infinite alternate,mgglow 2.4s ease-in-out infinite}
+.chip.mg .mt{font-size:10px;letter-spacing:.14em;color:#e08a00;font-weight:700}
+@keyframes mgslide{to{background-position:0 0,100% 0}}
+@keyframes mgglow{0%,100%{box-shadow:0 0 6px rgba(255,183,3,.35),0 0 14px rgba(251,86,7,.2)}50%{box-shadow:0 0 14px rgba(255,183,3,.8),0 0 28px rgba(192,38,211,.45)}}
+@media (prefers-reduced-motion:reduce){.chip.mg{animation:none;box-shadow:0 0 12px rgba(255,183,3,.6)}}
+.tg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.tb{border-radius:14px;padding:12px;text-align:center;border:2px solid}.tb.l{border-color:var(--l)}.tb.n{border-color:var(--n)}
+.tb .t{font-size:13px;font-weight:600;color:var(--mut)}.tb .big{font-size:44px;font-weight:800;line-height:1.1}
+.tsub{color:var(--mut);font-size:12px;text-align:center}
+textarea{width:100%;box-sizing:border-box;border:1px solid rgba(128,128,128,.4);border-radius:12px;padding:10px;font:inherit;background:var(--soft);color:inherit;resize:vertical}
+.rp{border:1px solid rgba(128,128,128,.35);border-radius:12px;padding:10px;margin-top:10px}.rp.accepted{border-color:#16a34a}
+.rp .rh{font-size:13px;color:var(--mut)}.rp .ok{color:#16a34a;font-weight:600}.rp .rt{margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.rp .rf{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--mut)}.rp .rf span{flex:1}
+.rp .rf button{border:0;border-radius:8px;padding:8px 12px;font-weight:600;cursor:pointer;background:var(--soft);color:inherit}.rp .rf button[data-ra=accept]{background:#16a34a;color:#fff}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="card hide" id="today"></div>
+<div class="card hide" id="wake" style="text-align:center;color:var(--mut)">Connecting to the server... on the free plan it can take up to a minute to wake up. Please wait.</div>
+<div id="s1">
+  <h1>🍛 Hostel Meal Tracker</h1><div class="sub">Who are you? Tap your name.</div>
+  <div class="card" id="names"></div>
+</div>
+
+<div id="s2" class="hide">
+  <h1>Hello, <span id="pick" style="text-transform:capitalize"></span></h1>
+  <div class="sub">Enter your personal password to continue.</div>
+  <div class="card">
+    <input id="code" class="code" type="password" autocomplete="off" maxlength="40" placeholder="Password">
+    <div class="err" id="err2"></div>
+    <button class="btn" id="login">Log in</button>
+    <button class="link" id="back">‹ Not me / go back</button>
+  </div>
+</div>
+
+<div id="s3" class="hide">
+  <div class="top"><div>Hi <b id="hi"></b><span id="mgr" class="badge hide">MANAGER</span></div><button class="link" id="out">Log out</button></div>
+  <button class="btn hide" id="xl" style="margin:0 0 14px">⬇ Download Excel (meals so far)</button>
+  <div class="card"><div class="lbl">Day</div>
+    <div class="dayrow"><button class="nav" id="prev">‹</button><select id="daysel"></select><button class="nav" id="next">›</button></div>
+  </div>
+  <div class="card" id="mine"></div>
+  <div class="card hide" id="bulkcard"><div class="lbl">Manager quick change · everyone · <span id="bulkday"></span></div>
+    <div class="bulk">
+      <div class="bk l"><div class="t">Lunch</div><div class="pair"><button data-bulk="l" data-d="-1">− 1</button><button data-bulk="l" data-d="1">+ 1</button></div></div>
+      <div class="bk n"><div class="t">Dinner</div><div class="pair"><button data-bulk="n" data-d="-1">− 1</button><button data-bulk="n" data-d="1">+ 1</button></div></div>
+    </div><div class="stat" id="bulkmsg"></div></div>
+  <div class="card"><div class="lbl" id="alllbl">Everyone on this day</div><div id="all"></div></div>
+  <div class="card hide" id="rptcard"><div class="lbl">Report or comment (only managers can read it)</div>
+    <textarea id="rtext" maxlength="500" rows="3" placeholder="Type your report or comment..."></textarea>
+    <button class="btn" id="rsend" style="margin-top:8px">Send</button><div class="stat" id="rmsg"></div></div>
+  <div class="card hide" id="rpanel"><div class="lbl">Reports &amp; comments <span id="rnew"></span></div><div id="rlist"></div></div>
+  <div class="card"><div class="lbl">Month total (meals already cooked)</div><div class="scroll"><table id="sum"></table></div></div>
+  <div class="sub" id="note"></div>
+</div>
+
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let CFG,tok=null,me=-1,mgr=false,meals={},off=0,day,pick=-1,poll=null;
+try{tok=localStorage.getItem("mt")}catch(e){}
+
+const API="";   // Website on GitHub Pages: put your Render address here, e.g. "https://hostel-meals.onrender.com" (no slash at the end). Leave "" when the server also serves this page.
+const xEsc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const xHm=m=>{const h=Math.floor(m/60);return (h%12||12)+":"+String(m%60).padStart(2,"0")+" "+(h<12?"AM":"PM")};
+const xDt=ms=>new Date(ms+CFG.tz).toLocaleString("en-GB",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true});
+const xLeft=ms=>{const m=Math.max(0,Math.ceil((ms-now())/6e4)),d=Math.floor(m/1440),h=Math.floor(m%1440/60);return d?d+" d "+h+" h":h?h+" h "+(m%60)+" min":m+" min"};
+async function loadToday(){
+  try{const t=await (await fetch(API+"/api/today")).json(),el=$("today");
+    const row=(k,l)=>t[k]==null?"":`<div class="tb ${k}"><div class="t">${l}</div><div class="big">${t[k]}</div><div class="tsub">meals cooking</div></div>`;
+    const h=row("l","Lunch today")+row("n","Dinner today");
+    el.innerHTML=h?`<div class="lbl">Today's cooking</div><div class="tg">${h}</div>`:`<div class="tsub">Today's meal count appears here: lunch ${xHm(t.show.l[0])} to ${xHm(t.show.l[1])}, dinner ${xHm(t.show.n[0])} to ${xHm(t.show.n[1])}.</div>`;
+    el.classList.remove("hide")}catch(e){}
+}
+async function sendReport(){
+  const t=$("rtext").value.trim();if(!t)return;
+  $("rtext").value="";
+  try{await api("/api/report",{text:t});$("rmsg").textContent="Sent \u2713"}catch(e){$("rtext").value=t;$("rmsg").textContent=e.message}
+  setTimeout(()=>{$("rmsg").textContent=""},5000);
+}
+async function loadReports(){
+  if(!mgr)return;
+  try{const r=await api("/api/reports"),p=r.items.filter(x=>x.status==="pending").length;
+    $("rnew").textContent=p?"\u00b7 "+p+" new":"";
+    $("rlist").innerHTML=r.items.length?r.items.map(x=>`<div class="rp ${x.status}"><div class="rh"><b>${xEsc(x.name)}</b> \u00b7 ${xDt(x.at)}${x.status==="accepted"?` \u00b7 <span class="ok">accepted by ${xEsc(x.acceptedByName)}</span>`:""}</div><div class="rt">${xEsc(x.text)}</div><div class="rf"><span>disappears in ${xLeft(x.expires)}</span>${x.status==="pending"?`<button data-ra="accept" data-id="${x.id}">Accept</button><button data-ra="dismiss" data-id="${x.id}">Dismiss</button>`:`<button data-ra="delete" data-id="${x.id}">Delete</button>`}</div></div>`).join(""):`<div class="tsub">No reports right now.</div>`}catch(e){}
+}
+async function reportAct(id,a){try{await api("/api/report/act",{id,action:a})}catch(e){alert(e.message)}loadReports()}
+async function api(p,body){
+  const r=await fetch(API+p,{method:body?"POST":"GET",headers:{"Content-Type":"application/json",...(tok?{Authorization:"Bearer "+tok}:{})},body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401&&tok&&p!=="/api/login")logout();
+  if(!r.ok)throw new Error(j.error||"Something went wrong");
+  return j;
+}
+const now=()=>Date.now()+off;
+const show=s=>["s1","s2","s3"].forEach(x=>$(x).classList.toggle("hide",x!==s));
+const fmt=t=>new Date(t).toLocaleString("en-GB",{timeZone:"Asia/Dhaka",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true});
+const lab=d=>new Date(d+"T12:00:00Z").toLocaleDateString("en-GB",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"});
+const cook=(d,s)=>{const [y,m,dd]=d.split("-").map(Number);return Date.UTC(y,m-1,dd,CFG.cook[s])-CFG.tz};
+const win=(d,s)=>{const c=cook(d,s),[y,m,dd]=d.split("-").map(Number);return[Date.UTC(y,m-1,dd-CFG.openDays)-CFG.tz,c-CFG.closeH*36e5]};
+const get=(d,i,s)=>{const k=d+"|"+i+"|"+s;return k in meals?meals[k]:CFG.def};
+function status(d,s){const[o,c]=win(d,s),n=now();
+  if(n<o)return{ok:false,t:"Opens "+fmt(o)};
+  if(n>=c)return{ok:false,t:"Locked (closed "+fmt(c)+")"};
+  return{ok:true,t:"Open until "+fmt(c)}}
+
+function logout(){tok=null;try{localStorage.removeItem("mt")}catch(e){}clearInterval(poll);start()}
+
+async function change(p,s,delta){
+  try{const r=await api("/api/meal",{date:day,p,slot:s,delta});meals=r.meals;render()}
+  catch(e){alert(e.message);refresh()}
+}
+async function refresh(){try{const r=await api("/api/state");meals=r.meals;off=r.now-Date.now();me=r.me;mgr=r.manager;render();loadReports();loadToday()}catch(e){}}
+
+function render(){
+  const N=CFG.names;
+  $("hi").textContent=N[me];$("mgr").classList.toggle("hide",!mgr);$("xl").classList.toggle("hide",!mgr);$("bulkcard").classList.toggle("hide",!mgr);$("rptcard").classList.toggle("hide",mgr);$("rpanel").classList.toggle("hide",!mgr);$("bulkday").textContent=lab(day);const bm=$("bulkmsg");if(bm.dataset.d!==day){bm.textContent="";bm.dataset.d=day}
+  $("daysel").innerHTML=CFG.days.map(d=>`<option value="${d}"${d===day?" selected":""}>${lab(d)}</option>`).join("");
+  const box=(s,name)=>{const st=status(day,s),c=get(day,me,s),dis=!mgr&&!st.ok;
+    return `<div class="mbox ${s}"><div class="t">${name}</div>${mgr?`<input class="qty big" type="number" min="0" max="${CFG.max}" value="${c}" data-p="${me}" data-s="${s}" data-set="1">`:`<div class="c">${c}</div>`}
+    <button class="add" data-p="${me}" data-s="${s}" data-d="1" ${dis?"disabled":""}>+ ${name}</button>
+    <button class="sm" data-p="${me}" data-s="${s}" data-d="-1" ${dis||!c?"disabled":""}>remove one</button>
+    <div class="stat">${mgr&&!st.ok?"Locked for members – you can still edit":st.t}</div></div>`};
+  $("mine").innerHTML=`<div class="lbl" style="text-transform:capitalize">My meals · ${lab(day)}</div><div class="big">${box("l","Lunch")}${box("n","Dinner")}</div>`;
+  $("alllbl").textContent=mgr?"Everyone (manager: you can change anyone, any time)":"Everyone on this day";
+  $("all").innerHTML=N.map((n,i)=>{
+    const l=get(day,i,"l"),k=get(day,i,"n");
+    if(!mgr)return `<div class="row"><span class="nm">${n}</span> <span class="cnt">· Lunch <b>${l}</b> · Dinner <b>${k}</b></span></div>`;
+    const ctl=(s,nm,c)=>`<div class="ctl"><button data-p="${i}" data-s="${s}" data-d="-1">−</button><span>${nm} <input class="qty" type="number" min="0" max="${CFG.max}" value="${c}" data-p="${i}" data-s="${s}" data-set="1"></span><button data-p="${i}" data-s="${s}" data-d="1">+</button></div>`;
+    return `<div class="row"><span class="nm">${n}</span><div class="mrow">${ctl("l","Lunch",l)}${ctl("n","Dinner",k)}</div></div>`}).join("");
+  let tl=0,tn=0,tp=0;
+  const rows=N.map((n,i)=>{let l=0,k=0,pl=0;CFG.days.forEach(d=>{["l","n"].forEach(s=>{const v=get(d,i,s);pl+=v;if(now()>=cook(d,s)){s==="l"?l+=v:k+=v}})});tl+=l;tn+=k;tp+=pl;return `<tr><td>${n}</td><td>${l}</td><td>${k}</td><td><b>${l+k}</b></td><td>${pl}</td></tr>`}).join("");
+  $("sum").innerHTML=`<thead><tr><th>Name</th><th>Lunch</th><th>Dinner</th><th>Total so far</th><th>Whole month plan</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>All</td><td>${tl}</td><td>${tn}</td><td>${tl+tn}</td><td>${tp}</td></tr></tfoot>`;
+  $("note").textContent=mgr?"Everyone starts with 1 lunch + 1 dinner every day. Members can change their own from 12:00 AM the day before (all of tomorrow is open today) until 2 hours before the cook arrives; you can change anyone at any time.":"Everyone starts with 1 lunch + 1 dinner every day. You can change yours from 12:00 AM the day before (all of tomorrow is open today) until 2 hours before the cook arrives (lunch 10 AM, dinner 6 PM).";
+}
+
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.ra){reportAct(t.dataset.id,t.dataset.ra)}
+  else if(t.dataset.bulk){bulk(t.dataset.bulk,+t.dataset.d)}
+  else if(t.dataset.s){change(+t.dataset.p,t.dataset.s,+t.dataset.d)}
+  else if(t.id==="prev"){const i=CFG.days.indexOf(day);if(i>0){day=CFG.days[i-1];render()}}
+  else if(t.id==="next"){const i=CFG.days.indexOf(day);if(i<CFG.days.length-1){day=CFG.days[i+1];render()}}
+});
+async function bulk(s,d){
+  try{const r=await api("/api/bulk",{date:day,slot:s,delta:d});meals=r.meals;render();
+    const m=$("bulkmsg");m.dataset.d=day;m.textContent=(s==="l"?"Lunch":"Dinner")+" · "+lab(day)+": everyone "+(d>0?"+1":"−1")+" ("+r.changed+" changed)"+(r.changed<CFG.names.length?" – the others were already at "+(d>0?"the max":"0"):"")}
+  catch(e){alert(e.message);refresh()}
+}
+async function setTo(p,s,value){try{const r=await api("/api/meal",{date:day,p,slot:s,value});meals=r.meals;render()}catch(e){alert(e.message);refresh()}}
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.set){const v=Number(t.value);if(t.value===""||!Number.isInteger(v)){refresh();return}setTo(+t.dataset.p,t.dataset.s,v)}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.set)e.target.blur()});
+$("daysel").onchange=e=>{day=e.target.value;render()};
+$("out").onclick=logout;$("xl").onclick=doExport;$("rsend").onclick=sendReport;
+async function doExport(){
+  if(window.EXPORT_HOOK)return window.EXPORT_HOOK();
+  try{const r=await fetch(API+"/api/export",{headers:{Authorization:"Bearer "+tok}});
+    if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||"Download failed");
+    const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());
+    a.download="Meals_"+new Date(now()+CFG.tz).toISOString().slice(0,10)+".xlsx";document.body.appendChild(a);a.click();a.remove();
+  }catch(e){alert(e.message)}
+}
+$("back").onclick=()=>show("s1");
+function devId(){let d=null;try{d=localStorage.getItem("did")}catch(e){}if(!d){d=Array.from(crypto.getRandomValues(new Uint8Array(12)),x=>x.toString(16).padStart(2,"0")).join("");try{localStorage.setItem("did",d)}catch(e){}}return d}
+async function doLogin(){
+  $("err2").textContent="";
+  try{const r=await api("/api/login",{name:CFG.names[pick],code:$("code").value.trim(),dev:devId()});
+    tok=r.token;try{localStorage.setItem("mt",tok)}catch(e){}$("code").value="";enter()}
+  catch(e){$("err2").textContent=e.message}
+}
+$("login").onclick=doLogin;$("code").onkeydown=e=>{if(e.key==="Enter")doLogin()};
+async function enter(){
+  await refresh();if(!tok)return;
+  const t=new Date(now()+CFG.tz).toISOString().slice(0,10);
+  day=CFG.days.includes(t)?t:CFG.days[0];
+  show("s3");render();clearInterval(poll);poll=setInterval(()=>{const a=document.activeElement;if(!(a&&a.classList&&a.classList.contains("qty")))refresh()},15000);
+}
+async function start(){
+  show("s1");
+  const M=(CFG.managers||[]).map(n=>CFG.names.indexOf(n)).filter(i=>i>=0),O=CFG.names.map((n,i)=>i).filter(i=>!M.includes(i));
+  $("names").innerHTML=(M.length?`<div class="lbl">Managers</div><div class="mgrs">${M.map(i=>`<button class="chip mg" data-pick="${i}"><span>👑 ${CFG.names[i]}</span><span class="mt">MANAGER</span></button>`).join("")}</div><div class="lbl">Members</div>`:"")+`<div class="chips">${O.map(i=>`<button class="chip" data-pick="${i}">${CFG.names[i]}</button>`).join("")}</div>`;
+  $("names").onclick=e=>{const b=e.target.closest("[data-pick]");if(!b)return;pick=+b.dataset.pick;$("pick").textContent=CFG.names[pick];$("err2").textContent="";$("code").value="";show("s2");$("code").focus()};
+}
+(async()=>{
+  const w=$("wake");w.classList.remove("hide");
+  for(;;){try{CFG=await (await fetch(API+"/api/config")).json();break}catch(e){await new Promise(r=>setTimeout(r,3000))}}
+  w.classList.add("hide");await start();loadToday();setInterval(loadToday,20000);if(tok)enter()})();
+</script>
+</body>
+</html>
