@@ -116,7 +116,7 @@ const $=id=>document.getElementById(id);
 let CFG,tok=null,me=-1,mgr=false,meals={},off=0,day,pick=-1,poll=null;
 try{tok=localStorage.getItem("mt")}catch(e){}
 
-const API="";   // Website on GitHub Pages: put your Render address here, e.g. "https://hostel-meals.onrender.com" (no slash at the end). Leave "" when the server also serves this page.
+const API="https://hostel-meals-server.onrender.com";   // Website on GitHub Pages: put your Render address here, e.g. "https://hostel-meals.onrender.com" (no slash at the end). Leave "" when the server also serves this page.
 const xEsc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const xHm=m=>{const h=Math.floor(m/60);return (h%12||12)+":"+String(m%60).padStart(2,"0")+" "+(h<12?"AM":"PM")};
 const xDt=ms=>new Date(ms+CFG.tz).toLocaleString("en-GB",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true});
